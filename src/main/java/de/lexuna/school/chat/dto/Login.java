@@ -65,5 +65,4 @@ public class Login {
     public String toString() {
         return "Login [userId=" + this.userId + ", password=" + this.password + "]";
     }
-
 }
