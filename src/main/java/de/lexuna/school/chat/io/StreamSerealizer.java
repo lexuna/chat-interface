@@ -2,6 +2,7 @@ package de.lexuna.school.chat.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,13 +21,15 @@ public class StreamSerealizer {
     public void send(Object obj) throws IOException {
         byte type = MessageType.CLASS_TO_BYTE.get(obj.getClass());
         byte[] json = MAPPER.writeValueAsBytes(obj);
-        int length = json.length;
+        byte[] length = ByteBuffer.allocate(4).putInt(json.length).array();
 
-        outputStream.write(type);
-        outputStream.write(length);
-        outputStream.write(json);
+        synchronized (outputStream) {
+            outputStream.write(type);
+            outputStream.write(length);
+            outputStream.write(json);
 
-        outputStream.flush();
+            outputStream.flush();
+        }
     }
 
     public OutputStream getOutputStream() {
