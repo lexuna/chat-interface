@@ -1,5 +1,6 @@
 package de.lexuna.school.chat.io;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -8,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.lexuna.school.chat.dto.MessageType;
 
-public class StreamSerealizer {
+public class StreamSerealizer implements Closeable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
@@ -34,5 +35,10 @@ public class StreamSerealizer {
 
     public OutputStream getOutputStream() {
         return outputStream;
+    }
+
+    @Override
+    public void close() throws IOException {
+        outputStream.close();
     }
 }

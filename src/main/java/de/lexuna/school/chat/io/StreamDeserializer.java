@@ -1,45 +1,47 @@
 package de.lexuna.school.chat.io;
 
+import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.lexuna.school.chat.dto.MessageType;
 
-public class StreamDeserializer {
+public class StreamDeserializer implements Closeable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private final InputStream inputStream;
+    private final BufferedReader inputStream;
 
     public StreamDeserializer(InputStream inputStream) {
-        this.inputStream = inputStream;
+        this.inputStream = new BufferedReader(new InputStreamReader(inputStream));
     }
 
     public Object read() throws IOException {
-        byte[] message = inputStream.readAllBytes();
-        byte type = message[0];
-        int length = getLength(message);
-        byte[] messageBytes = getMessage(message, length);
+        byte type = getInput(1)[0];
+        int length = getLength(getInput(4));
+        byte[] message = getInput(length);
 
-        return MAPPER.readValue(messageBytes, MessageType.BYTE_OT_CLASS.get(type));
+        return MAPPER.readValue(message, MessageType.BYTE_OT_CLASS.get(type));
     }
 
-    private byte[] getMessage(byte[] message, int length) {
-        byte[] messageBytes = new byte[length];
-        for (int i = 5; i < length; i++) {
-            messageBytes[i - 5] = message[i];
+    private byte[] getInput(int length) throws IOException {
+        byte[] array = new byte[length];
+        for (int i = 0; i < length; i++) {
+            array[i] = (byte) inputStream.read();
         }
-        return messageBytes;
+        return array;
     }
 
     private int getLength(byte[] message) throws IOException {
-        byte first = message[1];
-        byte second = message[2];
-        byte third = message[3];
-        byte fourth = message[4];
+        byte first = message[0];
+        byte second = message[1];
+        byte third = message[2];
+        byte fourth = message[3];
 
         byte[] lengthByte = { first, second, third, fourth };
 
@@ -47,7 +49,8 @@ public class StreamDeserializer {
         return wrapped.getInt();
     }
 
-    public InputStream getInputStream() {
-        return inputStream;
+    @Override
+    public void close() throws IOException {
+        inputStream.close();
     }
 }
