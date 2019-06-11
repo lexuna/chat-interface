@@ -17,7 +17,7 @@ public class Message {
 
     public static final byte TYPE_ID = 1;
 
-    private String message;
+    private byte[] message;
     private long time;
     private String senderId;
     private String receverId;
@@ -25,18 +25,18 @@ public class Message {
     public Message() {
     }
 
-    public Message(String message, long time, String senderId, String receverId) {
+    public Message(byte[] message, long time, String senderId, String receverId) {
         this.message = message;
         this.time = time;
         this.senderId = senderId;
         this.receverId = receverId;
     }
 
-    public String getMessage() {
+    public byte[] getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(byte[] message) {
         this.message = message;
     }
 

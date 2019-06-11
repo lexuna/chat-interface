@@ -1,10 +1,9 @@
 package de.lexuna.school.chat.io;
 
-import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,13 +14,13 @@ public class StreamDeserializer implements Closeable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private final BufferedReader inputStream;
+    private final InputStream inputStream;
 
     public StreamDeserializer(InputStream inputStream) {
-        this.inputStream = new BufferedReader(new InputStreamReader(inputStream));
+        this.inputStream = inputStream;
     }
 
-    public Object read() throws IOException {
+    public synchronized Object read() throws IOException, SocketException {
         byte type = getInput(1)[0];
         int length = getLength(getInput(4));
         byte[] message = getInput(length);

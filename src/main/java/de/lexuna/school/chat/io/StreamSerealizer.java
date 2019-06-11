@@ -23,7 +23,7 @@ public class StreamSerealizer implements Closeable {
         byte type = MessageType.CLASS_TO_BYTE.get(obj.getClass());
         byte[] json = MAPPER.writeValueAsBytes(obj);
         byte[] length = ByteBuffer.allocate(4).putInt(json.length).array();
-
+        
         synchronized (outputStream) {
             outputStream.write(type);
             outputStream.write(length);

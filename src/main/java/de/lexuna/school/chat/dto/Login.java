@@ -5,17 +5,18 @@ public class Login {
     public static final byte TYPE_ID = 3;
 
     private String userId;
-    private String password;
+    private byte[] key;
 
-    public Login() {}
-    
+    public Login() {
+    }
+
     public Login(String userId) {
         this.userId = userId;
     }
 
-    public Login(String userId, String password) {
+    public Login(String userId, byte[] key) {
         this.userId = userId;
-        this.password = password;
+        this.key = key;
     }
 
     public String getUserId() {
@@ -26,19 +27,19 @@ public class Login {
         this.userId = userId;
     }
 
-    public String getPassword() {
-        return this.password;
+    public byte[] getKey() {
+        return this.key;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setKey(byte[] key) {
+        this.key = key;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.password == null) ? 0 : this.password.hashCode());
+        result = prime * result + ((this.key == null) ? 0 : this.key.hashCode());
         result = prime * result + ((this.userId == null) ? 0 : this.userId.hashCode());
         return result;
     }
@@ -55,11 +56,11 @@ public class Login {
             return false;
         }
         Login other = (Login) obj;
-        if (this.password == null) {
-            if (other.password != null) {
+        if (this.key == null) {
+            if (other.key != null) {
                 return false;
             }
-        } else if (!this.password.equals(other.password)) {
+        } else if (!this.key.equals(other.key)) {
             return false;
         }
         if (this.userId == null) {
@@ -74,6 +75,6 @@ public class Login {
 
     @Override
     public String toString() {
-        return "Login [userId=" + this.userId + ", password=" + this.password + "]";
+        return "Login [userId=" + this.userId + ", password=" + this.key + "]";
     }
 }
